@@ -30,7 +30,6 @@ describe('loadConfig', () => {
       agentSecret: SECRET,
       supabaseUrl: DEFAULT_SUPABASE_URL,
       publishableKey: DEFAULT_PUBLISHABLE_KEY,
-      jwksUrl: `${DEFAULT_SUPABASE_URL}/auth/v1/.well-known/jwks.json`,
       schema: DEFAULT_SCHEMA,
     });
   });
@@ -39,22 +38,19 @@ describe('loadConfig', () => {
     expect(loadConfig({ ZONA_AGENT_TOKEN: `  ${TOKEN}\n` }).agentSecret).toBe(SECRET);
   });
 
-  it('derives the JWKS URL from an overridden SUPABASE_URL and strips trailing slashes', () => {
+  it('strips trailing slashes from an overridden SUPABASE_URL', () => {
     const config = loadConfig({ ZONA_AGENT_TOKEN: TOKEN, SUPABASE_URL: 'https://other.supabase.co//' });
     expect(config.supabaseUrl).toBe('https://other.supabase.co');
-    expect(config.jwksUrl).toBe('https://other.supabase.co/auth/v1/.well-known/jwks.json');
   });
 
-  it('takes an explicit publishable key, JWKS URL and schema', () => {
+  it('takes an explicit publishable key and schema', () => {
     const config = loadConfig({
       ZONA_AGENT_TOKEN: TOKEN,
       SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_other',
-      SUPABASE_JWKS_URL: 'https://keys.example.com/jwks.json',
       SUPABASE_SCHEMA: 'staging',
     });
     expect(config).toMatchObject({
       publishableKey: 'sb_publishable_other',
-      jwksUrl: 'https://keys.example.com/jwks.json',
       schema: 'staging',
     });
   });
@@ -100,7 +96,6 @@ describe('loadConfig', () => {
   it.each([
     ['SUPABASE_URL', 'http://iwybbgueyuxruebekmpy.supabase.co'],
     ['SUPABASE_URL', 'http://10.0.0.5:54321'],
-    ['SUPABASE_JWKS_URL', 'http://keys.example.com/jwks.json'],
   ])('refuses plain http for a real host in %s', (name, url) => {
     expect(messageOf(() => loadConfig({ ZONA_AGENT_TOKEN: TOKEN, [name]: url }))).toMatch(/https/);
   });

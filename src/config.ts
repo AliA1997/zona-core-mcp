@@ -15,7 +15,6 @@ export type Config = {
   agentSecret: string;
   supabaseUrl: string;
   publishableKey: string;
-  jwksUrl: string;
   schema: string;
 };
 
@@ -44,10 +43,6 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   }
 
   const supabaseUrl = secureUrl('SUPABASE_URL', env.SUPABASE_URL?.trim() || DEFAULT_SUPABASE_URL);
-  const jwksUrl = secureUrl(
-    'SUPABASE_JWKS_URL',
-    env.SUPABASE_JWKS_URL?.trim() || `${supabaseUrl}/auth/v1/.well-known/jwks.json`,
-  );
   const publishableKey = env.SUPABASE_PUBLISHABLE_KEY?.trim() || DEFAULT_PUBLISHABLE_KEY;
   assertPublishable(publishableKey);
 
@@ -56,7 +51,6 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
     agentSecret: credentials.secret,
     supabaseUrl,
     publishableKey,
-    jwksUrl,
     schema: env.SUPABASE_SCHEMA?.trim() || DEFAULT_SCHEMA,
   };
 }

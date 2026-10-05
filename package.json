@@ -9,8 +9,12 @@
     "zona-core-mcp": "dist/index.js",
     "zona-agent-admin": "dist/admin/cli.js"
   },
-  "files": ["dist"],
-  "engines": { "node": ">=22" },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
@@ -23,7 +27,6 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.0",
     "@supabase/supabase-js": "^2.117.2",
-    "jose": "^6.2.12",
     "zod": "^4.6.5"
   },
   "devDependencies": {
