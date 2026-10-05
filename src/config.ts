@@ -55,18 +55,22 @@ export function loadConfig(env: NodeJS.ProcessEnv): Config {
   };
 }
 
+// Never echo the raw value in these messages: it may be a real secret pasted into the wrong field.
 function secureUrl(name: string, raw: string): string {
   let url: URL;
   try {
     url = new URL(raw);
   } catch {
-    throw new ConfigError(`${name} is not a valid URL: ${raw}`);
+    throw new ConfigError(`${name} is not a valid URL.`);
   }
   if (url.protocol !== 'https:' && url.protocol !== 'http:') {
-    throw new ConfigError(`${name} must be an https URL: ${raw}`);
+    throw new ConfigError(`${name} must be an https URL.`);
+  }
+  if (url.username || url.password) {
+    throw new ConfigError(`${name} must not contain credentials.`);
   }
   if (url.protocol === 'http:' && !LOCAL_HOSTS.has(url.hostname)) {
-    throw new ConfigError(`${name} must use https (plain http would expose the agent's session): ${raw}`);
+    throw new ConfigError(`${name} must use https (plain http would expose the agent's session).`);
   }
   return raw.replace(/\/+$/, '');
 }

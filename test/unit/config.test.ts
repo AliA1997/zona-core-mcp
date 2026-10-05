@@ -88,6 +88,12 @@ describe('loadConfig', () => {
       .toMatch(/not a Supabase publishable key/);
   });
 
+  it.each(['SUPABASE_URL'])('never echoes a secret pasted into %s', (name) => {
+    for (const secret of ['sb_secret_abcdefghijklmnop', TOKEN, 'https://user:hunter2@iwybbgueyuxruebekmpy.supabase.co']) {
+      expect(messageOf(() => loadConfig({ ZONA_AGENT_TOKEN: TOKEN, [name]: secret }))).not.toMatch(/sb_secret_|zat_|hunter2/);
+    }
+  });
+
   it('never reads SUPABASE_SECRET_KEY', () => {
     const config = loadConfig({ ZONA_AGENT_TOKEN: TOKEN, SUPABASE_SECRET_KEY: 'sb_secret_should_be_ignored' });
     expect(JSON.stringify(config)).not.toContain('sb_secret_should_be_ignored');
